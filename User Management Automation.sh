@@ -6,7 +6,7 @@ A company hires 10 new developers. Create a bash script that:
 
 Creates users
 
-
+Set Password
 
 Adds them to a group
 
