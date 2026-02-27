@@ -1,0 +1,7 @@
+Monitor /var/log/syslog and:
+
+Detect "error"
+
+Count occurrences
+
+Alert if errors > 10
