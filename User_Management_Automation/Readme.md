@@ -3,7 +3,7 @@
 Disk space exhaustion is one of the most common causes of production outages.
 --> When disk usage reaches critical levels:
 --> Applications fail to write logs
---> Databases may crash
+--> Databases may crash  
 --> Services may stop unexpectedly
 --> System performance degrades
 --> Server may become completely unresponsive
