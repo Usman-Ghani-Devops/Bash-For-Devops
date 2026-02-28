@@ -1,12 +1,12 @@
 **Project Overview**
 
 Disk space exhaustion is one of the most common causes of production outages.
---> When disk usage reaches critical levels:
---> Applications fail to write logs
---> Databases may crash  
---> Services may stop unexpectedly
---> System performance degrades
---> Server may become completely unresponsive
+When disk usage reaches critical levels:
+Applications fail to write logs.
+Databases may crash.
+Services may stop unexpectedly.
+System performance degrades.
+Server may become completely unresponsive.
 This project provides a lightweight Bash-based disk monitoring solution that checks disk usage and generates a warning when usage exceeds a defined threshold.
 
 **Objective**
@@ -21,11 +21,11 @@ This script automates that monitoring check.
 
 **Technologies Used**
 
-Linux
-Bash Scripting
-df command
-awk
-Cron (for automation)
+Linux.
+Bash Scripting.
+df command.
+awk.
+Cron (for automation).
 
 
 **Script Code**
