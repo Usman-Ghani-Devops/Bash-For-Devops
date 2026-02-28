@@ -80,7 +80,7 @@ Add:
 */5 * * * * /full/path/disk_monitor.sh >> /var/log/disk_monitor.log 2>&1  
 Explanation  
 */5 → Every 5 minutes  
->> → Append output to log file 
+Append output to log file 
 2>&1 → Capture errors also  
 
 **Testing the Script**  
