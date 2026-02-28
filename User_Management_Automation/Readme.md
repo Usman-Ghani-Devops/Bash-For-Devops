@@ -1,104 +1,183 @@
 **Project Overview**
 
-Disk space exhaustion is one of the most common causes of production outages.
-When disk usage reaches critical levels:
-Applications fail to write logs.
-Databases may crash.
-Services may stop unexpectedly.
-System performance degrades.
-Server may become completely unresponsive.
-This project provides a lightweight Bash-based disk monitoring solution that checks disk usage and generates a warning when usage exceeds a defined threshold.
+In growing companies, onboarding multiple developers manually can be time-consuming and error-prone.  
+This Bash script automates the onboarding process for new developers by:  
+1. Creating user accounts  
+2. Setting initial passwords  
+3. Adding users to a specified group  
+4. Creating a shared project directory  
+5. Applying proper ownership and permissions  
+6. This simulates a real-world DevOps task performed during team expansion.  
 
 **Objective**
 
-To monitor system disk usage and trigger an alert if usage exceeds a configured percentage limit.
+Automate the process of onboarding developers in a Linux environment while ensuring:  
+1. Proper user creation  
+2. Secure password setup  
+3. Group-based access control  
+4. Secure shared directory permissions  
 
 **Scenario**
 
-In a production Linux server:  
-If disk usage > 80%, send warning.  
-This script automates that monitoring check.
+A company hires 10 new developers.  
+The system administrator needs to:  
+Create user accounts  
+Assign default passwords  
+Add users to a development group  
+Create a shared project directory  
+Configure correct permissions for collaboration  
+This script automates the entire workflow.  
 
 **Technologies Used**
 
-Linux.  
-Bash Scripting.  
-df command.  
-awk.  
-Cron (for automation).
-
+1. Linux  
+2. Bash scripting  
+3. useradd  
+4. chpasswd  
+5. groupadd  
+6. gpasswd  
+7. chmod  
+8. chown  
+9. Exit codes & input validation  
 
 **Script Code**
 
 #!/bin/bash  
-set -e  
 
-threshold=85  
+read -p "Enter the Group: " group  
 
-if ! df -h | awk -v t="$threshold" '$5+0 > t {exit 1}'; then  
-    echo "WARNING: Disk usage exceeded ${threshold}%"  
+if getent group "$group" &> /dev/null ; then  
+    echo "Group Already exists"  
+    exit 1  
+else  
+    sudo groupadd "$group"  
 fi  
 
-**Script Explanation (Step-by-Step)**
+for (( i=1;i<=10;i++ ))do  
+    read -p "Enter the $i username:  " user  
+    if  id "$user" &> /dev/null ; then  
+        echo "User already exists"  
+    else  
+        sudo useradd -m -s /bin/bash "$user"  
+        echo "$user:$user" | sudo chpasswd  
+        sudo passwd -e "$user"  
+    fi  
+    sudo gpasswd -a "$user" "$group"  
+done  
 
-**set -e**  
-Stops script immediately if any command fails.  
-Prevents silent failures.  
-Good production practice.  
+read -p "Enter the Directory name: " Project  
+
+if [[ ! -d "$Project" ]]; then  
+    sudo mkdir -p "$Project"  
+fi  
+
+sudo chown :"$group" "$Project"  
+sudo chmod 2770 "$Project"  
+
+echo "Directory Project is ready for the $group group"  
+
+**Script Explanation (Step-by-Step)**  
+
+**Group Creation** 
+
+getent group "$group"
+
+Checks if the group already exists.  
+Prevents duplicate group creation.  
+If not found → creates group using groupadd  
  
-**threshold=85**  
-Defines disk usage limit.  
-Can be modified based on requirement (e.g., 80%, 90%).  
+**User Creation Loop**
 
-**df -h**  
-Displays disk usage in human-readable format:  
-Filesystem      Size  Used Avail Use% Mountedon  
-/dev/sda1        40G   32G   8G   80% /    
+for (( i=1;i<=10;i++ ))  
+Loops to create multiple users.  
+Can be adjusted to 10 for real scenario.  
+Inside loop:  
+Check if user exists  
+id "$user"  
+Prevents duplicate user creation.  
+Create user  
+sudo useradd -m -s /bin/bash "$user"  
+-m → Creates home directory  
+-s /bin/bash → Sets default shell  
+Set password  
+echo "$user:$user" | sudo chpasswd  
+Sets default password same as username.  
+Force password change  
+sudo passwd -e "$user"  
+Forces user to change password at first login.  
 
-**awk -v t="$threshold" '$5+0 > t {exit 1}'**  
-$5 → Represents Use% column  
-+0 → Converts percentage string into numeric value  
--v t="$threshold" → Pass shell variable into awk  
-exit 1 → If usage exceeds threshold, return failure  
+**Add User to Group**
 
-**! (Logical NOT Operator)**  
-The ! reverses the result  
-If awk exits with error → condition becomes TRUE  
-Warning message print  
+sudo gpasswd -a "$user" "$group"  
+Adds user to specified group.  
+Enables group-based access control.  
 
-**How to Run**  
+**Project Directory Creation**
+
+sudo mkdir -p "$Project" 
+Creates shared directory if not exists.  
+
+**Ownership Configuration**
+
+sudo chown :"$group" "$Project"  
+Sets group ownership of directory.  
+Owner remains root (optional improvement possible).  
+
+**Permission Setup**
+
+sudo chmod 2770 "$Project"  
+Breakdown of 2770:  
+2 → SetGID bit  
+7 → Owner full access (rwx)  
+7 → Group full access (rwx)  
+0 → Others no access  
+
+Why SetGID?  
+SetGID ensures:  
+Any new file created inside directory automatically inherits the group.  
+This is a professional Linux permission practice for shared development environments.  
+
+**How to Run**
 
 Step 1: Make executable  
-  chmod +x disk_monitor.sh  
+chmod +x user_setup.sh  
 Step 2: Execute  
-  ./disk_monitor.sh  
-Automation with Cron  
-To run every 5 minutes:  
-sudo crontab -e  
+./user_setup.sh  
+Step 3: Provide input  
+Enter group name  
+Enter usernames  
+Enter project directory name  
 
-Add: 
-*/5 * * * * /full/path/disk_monitor.sh >> /var/log/disk_monitor.log 2>&1  
-Explanation  
-*/5 → Every 5 minutes  
-Append output to log file 
-2>&1 → Capture errors also  
+**Security Considerations**
 
-**Testing the Script**  
+Script requires sudo privileges.  
+Default passwords should be changed immediately.  
+Consider generating random passwords for production environments.  
 
-You can test by:  
-Temporarily lowering threshold to 10%  
-Filling disk space using test files  
-Monitoring output logs  
+**Real-World Relevance**
 
-**Real World Relevance**
+This script simulates real onboarding automation used in:  
+DevOps teams  
+System administration  
+Infrastructure management  
+Startup environment  
+Server provisioning workflows  
+Large organizations automate similar processes using:  
+Ansible  
+Terraform  
+LDAP / Active Directory  
+CI/CD pipelines   
 
-Large tech companies like:  
-Amazon  
-Google  
-Netflix  
+**Skills Demonstrated**
 
-Use advanced monitoring systems (CloudWatch, Prometheus, etc.), but the core logic still relies on:  
-Checking disk usage 
-Comparing against thresholds    
-Triggering alerts  
-This project demonstrates foundational DevOps monitoring skills.  
+1. Linux user management
+2. Group administration
+3. Permission management
+4. SetGID usage
+5. Automation scripting
+6. Input validation
+7. Production onboarding simulation
+
+**Conclusion**
+
+This project demonstrates practical DevOps and Linux system administration skills by automating user onboarding and shared project environment setup. It reflects real-world operational tasks performed in growing technical teams.
