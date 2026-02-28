@@ -26,7 +26,7 @@ else
 	sudo groupadd "$group"
 fi
 
-for (( i=1;i<=2;i++ ))do
+for (( i=1;i<=10;i++ ))do
 	read -p "Enter the $i usrname:  " user
 	if  id "$user" &> /dev/null ; then
 		echo "User already exsists addding"
