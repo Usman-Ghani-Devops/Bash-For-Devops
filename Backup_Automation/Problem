@@ -1,0 +1,4 @@
+Scenario:
+Backup /var/www daily into timestamp folder.
+
+Real world: Server backup
