@@ -1,0 +1,14 @@
+Network Troubleshooting Toolkit
+
+Scenario:
+Write a script that:
+
+Checks connectivity using ping
+
+Checks open ports using ss
+
+Tests DNS resolution
+
+If any fails → log issue.
+
+Real world: Server unreachable problem
