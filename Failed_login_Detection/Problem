@@ -1,0 +1,7 @@
+Failed Login Detection
+
+Monitor:
+
+/var/log/auth.log
+
+If failed login > 5 from same IP → block IP
