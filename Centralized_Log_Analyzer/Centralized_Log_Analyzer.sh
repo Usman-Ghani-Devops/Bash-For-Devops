@@ -1,4 +1,4 @@
-# /bin/bash
+#!/bin/bash
 set -e
 shopt -s nullglob
 
@@ -15,11 +15,11 @@ do
 		while read -r line
 
 		do
-			level=$(echo "$line" | awk '{print 3}')
+			level=$(echo "$line" | awk '{print $3}')
 			((total_logs++))
 
 			((levels["$level"]++))
-			message=$(echo "$line" | awk '{print 4}')
+			message=$(echo "$line" | cut -d' ' -f4-)
 
 			if [[ "$level" == "Error" ]];then
 				((messages["$message"]++))
@@ -35,10 +35,10 @@ max_count=0
 
 for err in "${!messages[@]}"
 do
-	if [[ "{$messages[err]}" -gt "$max_count" ]];
+	if [[ "${messages[$err]}" -gt "$max_count" ]];
 	then 
-		max_count="${messages[err]}"
-		top="$err"
+		max_count="${messages[$err]}"
+		top_error="$err"
 	fi
 done
 {
@@ -52,7 +52,7 @@ echo "Total Logs: $total_logs"
 
 for err in "${!levels[@]}"
 do
-	echo " $err " ${levels[$err]}"
+	echo " $err: ${levels[$err]}"
 done
 echo "Most Common Error"
 echo "$top_error ($max_count) times"
