@@ -1,0 +1,12 @@
+Centralized Log Analyzer  
+
+Multiple servers log files collected.  
+Write script that:  
+
+Parse logs  
+
+Categorize error types  
+
+Generate report file  
+
+Real world: ELK alternative basic version
