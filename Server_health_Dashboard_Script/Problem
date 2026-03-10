@@ -1,0 +1,9 @@
+Server Health Dashboard 
+
+Script Script should output:
+
+CPU usage
+Memory usage
+Disk usage 
+Top 5 processes
+Network connections
