@@ -1,0 +1,10 @@
+Scenario:
+Deploy a web app:
+
+Pull latest code
+
+Restart service
+
+Verify port listening
+
+Rollback if failed
